@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:Infra="clr-namespace:ShinyMod.Infrastructure"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="MonoDoublePulseBle.Views.AboutPage"
+             xmlns:vm="clr-namespace:MonoDoublePulseBle.ViewModels"
+             Title="{Binding Title}">
+    
+    <ContentPage.BindingContext>
+        <vm:AboutViewModel />
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Primary">#2196F3</Color>
+            <Color x:Key="Accent">#96d1ff</Color>
+            <Color x:Key="LightTextColor">#999999</Color>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Button Command="{Binding ScanToggle}" Grid.Row="0">
+            <Button.Triggers>
+                <DataTrigger TargetType="Button" Binding="{Binding IsScanning}" Value="True">
+                    <Setter Property="Text" Value="Stop Scan" />
+                </DataTrigger>
+                <DataTrigger TargetType="Button" Binding="{Binding IsScanning}" Value="False">
+                    <Setter Property="Text" Value="Scan" />
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+        <ScrollView Grid.Row="1">
+            <ListView ItemsSource="{Binding Peripherals}" RowHeight="160">
+                <ListView.Behaviors>
+                    <Infra:ItemTappedCommandBehavior Command="{Binding SelectPeripheral}" />
+                </ListView.Behaviors>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Text="{Binding Name}"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           FontAttributes="Bold"
+                                           FontSize="15" />
+
+                                    <Label Text="{Binding Rssi, StringFormat='RSSI: {0}'}"
+                                           Grid.Row="0"
+                                           Grid.Column="1"
+                                           TextColor="Red" />
+
+                                    <Label Text="{Binding Uuid, StringFormat='UUID: {0}'}"
+                                           Grid.Row="1"
+                                           Grid.ColumnSpan="2"
+                                           FontAttributes="Italic" />
+
+                                    <Label Text="{Binding Connectable, StringFormat='Connectable: {0}'}"
+                                           Grid.Row="2"
+                                           Grid.Column="0" />
+
+                                    <Label Text="{Binding ServiceCount, StringFormat='{0} Services'}"
+                                           Grid.Row="2"
+                                           Grid.Column="1" />
+
+                                    <Label Text="{Binding LocalName, StringFormat='Local Name: {0}'}"
+                                           Grid.Row="3"
+                                           Grid.Column="0" />
+
+                                    <Label Text="Peripheral Connected"
+                                           IsVisible="{Binding IsConnected}"
+                                           BackgroundColor="Yellow"
+                                           TextColor="Black"
+                                           HorizontalTextAlignment="Center"
+                                           Grid.ColumnSpan="2"
+                                           Grid.Row="4" />
+                                </Grid>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollView>
+        <ActivityIndicator IsRunning="{Binding IsScanning}" Grid.Row="2"/>
+    </Grid>
+    
+</ContentPage>
